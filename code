@@ -1,0 +1,53 @@
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Datos originales
+n = np.arange(1, 6)
+x = np.array([16, 8, 11, 15, 20], dtype=float)
+y = np.array([2, 1, 3, 2, 2], dtype=float)
+
+# Condición inicial: y[0] = 0
+y_anterior = np.concatenate(([0.0], y[:-1]))
+
+# Modelo: y[n] = i*y[n-1] + j*x[n]
+# Matriz para el método de mínimos cuadrados
+A = np.column_stack((y_anterior, x))
+
+# Calcular los coeficientes i y j
+coeficientes, residuos, rango, valores = np.linalg.lstsq(
+    A, y, rcond=None
+)
+
+i, j = coeficientes
+
+# Calcular la salida estimada del modelo
+y_modelo = A @ coeficientes
+
+# Mostrar resultados
+print("RESULTADOS DEL METODO DE MINIMOS CUADRADOS")
+print(f"Coeficiente i = {i:.4f}")
+print(f"Coeficiente j = {j:.4f}")
+print()
+print("Ecuacion de diferencias:")
+print(f"y[n] = ({i:.4f})*y[n-1] + ({j:.4f})*x[n]")
+print()
+print("Comparacion de resultados:")
+print("n | Original | Modelo")
+for k in range(len(n)):
+    print(f"{n[k]} | {y[k]:.4f} | {y_modelo[k]:.4f}")
+
+# Graficar datos originales y modelo
+plt.figure(figsize=(9, 5))
+
+plt.plot(n, y, "o-", label="Datos originales")
+plt.plot(n, y_modelo, "s--", label="Modelo por minimos cuadrados")
+
+plt.title("Comparacion entre datos originales y modelo")
+plt.xlabel("Numero de partido (n)")
+plt.ylabel("Goles")
+plt.xticks(n)
+plt.grid(True)
+plt.legend()
+plt.tight_layout()
+plt.show()
